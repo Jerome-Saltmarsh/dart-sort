@@ -1,28 +1,30 @@
+import 'sort_double.dart';
+import 'utility.dart';
 
-import 'dart:math';
+int totalArraysCreated = 0;
+int comparisons = 0;
+int calls = 0;
 
-//void main() {
-//  List<int> unsortedList = generateRandomList(total: 1000, max: 1000);
-//  try {
-//    List<List<int>> sortedPiles = pileSort(unsortedList);
-//
-//    print("Unsorted");
-//    print(unsortedList);
-//    print("Soted Piles");
-//    print(sortedPiles);
-//    print("Total arrays: $totalArraysCreated");
-//    print("Total Sort Calls: $totalSortCalls");
-//    print("Total Comparisons: $comparisons");
-//  } catch (e) {
-//    print(e);
-//  }
-//}
-//
-//List<int> generateRandomList({int total = 100, int max = 1000}) {
-//  Random random = Random();
-//  List<int> unsortedList = List();
-//  for (int i = 0; i < total; i++) {
-//    unsortedList.add(random.nextInt(max));
-//  }
-//  return unsortedList;
-//}
+void main() {
+  const int total = 10000000;
+  print("Generating Random List");
+  List<double> unsortedList = generateRandomDoubles(total: total, max: 1);
+//  print(unsortedList);
+  try {
+    print("Starting Sort");
+    List sortedPiles = pileSortDouble(unsortedList);
+    print("Sort Finished");
+    List<double> sortedNumbers = pilesToList(sortedPiles);
+    errorCheck(sortedNumbers, unsortedList);
+//    print("Sorted Piles");
+//    print(sortedNumbers);
+//    print(sortedNumbers);
+    print("Total Elements: $total");
+    print("Total Arrays: $totalArraysCreated");
+    print("Total Calls: $calls");
+  } catch (e) {
+    print(e);
+  }
+}
+
+

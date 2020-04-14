@@ -1,7 +1,6 @@
 import 'dart:math';
 
 int totalArraysCreated = 0;
-int totalSortCalls = 0;
 int comparisons = 0;
 int calls = 0;
 
@@ -20,7 +19,6 @@ void main() {
     print(sortedPiles);
     print("Total Elements: $total");
     print("Total Arrays: $totalArraysCreated");
-    print("Total Sort Calls: $totalSortCalls");
     print("Total Calls: $calls");
   } catch (e) {
     print(e);
@@ -33,42 +31,51 @@ T call<T>(Function function) {
 }
 
 List<List<int>> pileSort(List<int> unsortedList) {
-  totalSortCalls++;
-
   // if all the values are the same then return the list as it is
-  if (unsortedList.every((value) => value == unsortedList[0])) {
-    return [unsortedList];
+//  if (unsortedList.every((value) => value == unsortedList[0])) {
+//    return [unsortedList];
+//  }
+
+  if (unsortedList.isEmpty) {
+    return [];
   }
 
   int min = unsortedList[0];
   int max = unsortedList[0];
 
-  unsortedList.forEach((value) {
-    if (call(() => value < min)) {
-      min = value;
-      return;
+  int unsortedListLength = unsortedList.length;
+
+  for (int i = 0; i < unsortedListLength; i++) {
+    if (unsortedList[i] < min) {
+      min = unsortedList[i];
+    } else if (unsortedList[i] > min) {
+      max = unsortedList[i];
     }
+  }
 
-    if (call(() => value > max)) {
-      max = value;
-      return;
-    }
-  });
+//  unsortedList.forEach((value) {
+//    if (call(() => value < min)) {
+//      min = value;
+//      return;
+//    }
+//
+//    if (call(() => value > max)) {
+//      max = value;
+//      return;
+//    }
+//  });
 
-  int minPlusMax = call(() => min + max);
-  int range = max - min;
-  int totalPiles = range;
+  if (max == min) {
+    return [unsortedList];
+  }
 
+//  int range = max - min;
+  double indexRatio = (max - min) / 100;
   Map<int, List<int>> piles = Map();
 
   unsortedList.forEach((value) {
-//    int index = ((value / minPlusMax) * totalPiles).toInt();
-    double indexDouble = ((value - min) / range) * 100;
+    double indexDouble = (value - min) * indexRatio;
     int index = indexDouble.toInt();
-//    int index = (value)
-    if (index == piles.length) {
-      index--;
-    }
     if (!piles.containsKey(index)) {
       totalArraysCreated++;
       piles[index] = [];

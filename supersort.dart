@@ -6,17 +6,21 @@ int comparisons = 0;
 int calls = 0;
 
 void main() {
-  List<int> unsortedList = generateRandomList(total: 1000, max: 1000);
+  const int total = 10000;
+  print("Generating Random List");
+  List<int> unsortedList = generateRandomList(total: total, max: 100);
   try {
+    print("Starting Sort");
     List<List<int>> sortedPiles = pileSort(unsortedList);
+    print("Sort Finished");
 
-    print("Unsorted");
-    print(unsortedList);
-    print("Soted Piles");
+//    print("Unsorted");
+//    print(unsortedList);
+    print("Sorted Piles");
     print(sortedPiles);
-    print("Total arrays: $totalArraysCreated");
+    print("Total Elements: $total");
+    print("Total Arrays: $totalArraysCreated");
     print("Total Sort Calls: $totalSortCalls");
-//    print("Total Comparisons: $comparisons");
     print("Total Calls: $calls");
   } catch (e) {
     print(e);
@@ -45,7 +49,7 @@ List<List<int>> pileSort(List<int> unsortedList) {
       return;
     }
 
-    if (call(() => value > min)) {
+    if (call(() => value > max)) {
       max = value;
       return;
     }
@@ -58,7 +62,10 @@ List<List<int>> pileSort(List<int> unsortedList) {
   Map<int, List<int>> piles = Map();
 
   unsortedList.forEach((value) {
-    int index = ((value / minPlusMax) * totalPiles).toInt();
+//    int index = ((value / minPlusMax) * totalPiles).toInt();
+    double indexDouble = ((value - min) / range) * 100;
+    int index = indexDouble.toInt();
+//    int index = (value)
     if (index == piles.length) {
       index--;
     }
@@ -72,27 +79,27 @@ List<List<int>> pileSort(List<int> unsortedList) {
   List<List<int>> sortedPiles = List();
 
   for (int i = 0; i < piles.length; i++) {
-    if(piles.containsKey(i)){
+    if (piles.containsKey(i)) {
       sortedPiles.add(piles[i]);
     }
   }
 
   return sortedPiles;
-
-//  piles.fold<List<List<int>>>([], (previous, element) {
-//    if (element.isNotEmpty) {
-//      previous.addAll(pileSort(element));
-//    }
-//    return previous;
-//  });
-//  return sortedPiles;
 }
 
-List<int> generateRandomList({int total = 100, int max = 1000}) {
+List<int> generateRandomList(
+    {int total = 100, int max = 1000, bool includeNegatives = true}) {
   Random random = Random();
   List<int> unsortedList = List();
   for (int i = 0; i < total; i++) {
-    unsortedList.add(random.nextInt(max));
+    int value = random.nextInt(max);
+    if (includeNegatives) {
+      if (random.nextBool()) {
+        value = -value;
+      }
+    }
+
+    unsortedList.add(value);
   }
   return unsortedList;
 }

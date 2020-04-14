@@ -1,13 +1,11 @@
+
 List<List<int>> pileIntSort(List<int> unsortedList) {
 
-  if (unsortedList.length < 2) {
-    return [unsortedList];
-  }
-
+  int length = unsortedList.length;
   int min = unsortedList[0];
   int max = unsortedList[0];
 
-  for (int i = 0; i < unsortedList.length; i++) {
+  for (int i = 0; i < length; i++) {
     if (unsortedList[i] < min) {
       min = unsortedList[i];
     } else if (unsortedList[i] > max) {
@@ -21,17 +19,18 @@ List<List<int>> pileIntSort(List<int> unsortedList) {
 
   int range = max - min;
   Map<int, List<int>> piles = Map();
+  int maxIndex = (length - 1);
 
-  int maxIndex = (unsortedList.length - 1);
+  for (int i = 0; i < length; i++) {
 
-  unsortedList.forEach((value) {
-    double indexDouble = ((value - min) / range) * maxIndex;
-    int index = indexDouble.toInt();
-    if (!piles.containsKey(index)) {
-      piles[index] = [];
+    int index = (((unsortedList[i] - min) / range) * maxIndex).toInt();
+
+    if (piles.containsKey(index)) {
+      piles[index].add(unsortedList[i]);
+    } else {
+      piles[index] = [unsortedList[i]];
     }
-    piles[index].add(value);
-  });
+  }
 
   List<List<int>> sortedPiles = List();
 

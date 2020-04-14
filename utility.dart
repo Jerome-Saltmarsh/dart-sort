@@ -35,6 +35,8 @@ List<int> generateRandomInts(
 
 List<double> generateRandomDoubles(
     {int total = 100, int max = 1000, bool includeNegatives = true}) {
+
+  print("Generating Random List");
   Random random = Random(DateTime.now().microsecond);
   List<double> unsortedList = List();
   for (int i = 0; i < total; i++) {
@@ -47,5 +49,6 @@ List<double> generateRandomDoubles(
 
     unsortedList.add(value);
   }
+  print("Generating Random List Finished");
   return unsortedList;
 }

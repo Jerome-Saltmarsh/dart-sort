@@ -9,26 +9,27 @@ int calls = 0;
 void main() {
   const int total = 10000000;
 
-//  List<double> unsortedList = generateRandomDoubles(total: total, max: 1);
-  List<int> unsortedInts = generateRandomInts(total: total, max: 1000);
+//  List<double> unsorted = generateRandomDoubles(total: total, max: 1000);
+  List<int> unsorted = generateRandomInts(total: total, max: 1000);
+
+  print('unsorted lenght ${unsorted.length}');
 
   try {
-    print("Starting Sort of $total numbers");
-    DateTime start = DateTime.now();
-//    testQuickSortInt(unsortedInts);
-    List<List<int>> results = testPileSortInt(unsortedInts);
-    DateTime finished = DateTime.now();
-    Duration duration = finished.difference(start);
-//  print(unsortedList);
+//    List<List<int>> results = testPileSortInt(unsorted);
+//    List results = testPileSortDouble(unsorted);
 //    List sortedPiles = pileSortDouble(unsortedList);
+    var results = pileIntSort(unsorted);
+    testQuickSortInt(unsorted);
 
-    int seconds = duration.inSeconds;
-    int milliseconds = duration.inMilliseconds % 1000;
-    print(results);
-    print("Sort Finished in $seconds seconds $milliseconds milliseconds");
+
+
+
+//      print(results);
+//     testQuickSortDouble(unsorted);
 
 //    List<double> sortedNumbers = pilesToList(sortedPiles);
-//    errorCheck(unsortedList, unsortedList);
+//    List<double> sorted = pilesToList(results);
+//    errorCheck(sorted, unsorted);
 //    print("Sorted Piles");
 //    print(unsortedList);
 //    print(sortedNumbers);
@@ -40,23 +41,51 @@ void main() {
   }
 }
 
-void testPileSort(List<double> unsortedList) {
-  pilesToList(pileSortDouble(unsortedList));
+dynamic testPileSortDouble(List<double> unsortedList) {
+  print("Starting PileSort of ${unsortedList.length} numbers");
+  DateTime start = DateTime.now();
+  var sorted = pileSortDouble(unsortedList);
+  DateTime finished = DateTime.now();
+  Duration duration = finished.difference(start);
+  int seconds = duration.inSeconds;
+  int milliseconds = duration.inMilliseconds % 1000;
+  print("PileSort Finished in $seconds seconds $milliseconds milliseconds");
+  return sorted;
 }
 
-List<List<int>> testPileSortInt(List<int> unsortedList) {
-  return pileIntSort(unsortedList);
+void timeFunction(Function function) {
+  DateTime start = DateTime.now();
+  function();
+  DateTime finished = DateTime.now();
+  Duration duration = finished.difference(start);
+  int seconds = duration.inSeconds;
+  int milliseconds = duration.inMilliseconds % 1000;
+  print("Finished in $seconds seconds $milliseconds milliseconds");
 }
 
-void testQuickSortDouble(List<double> unsortedList) {
-  unsortedList.sort(quicksortDouble);
+
+//void testSortedIns(List<int>)
+
+List<double> testQuickSortDouble(List<double> unsortedList) {
+  print("Starting QuickSort of ${unsortedList.length} numbers");
+  DateTime start = DateTime.now();
+  unsortedList.sort(quicksortAlgorithmDouble);
+  DateTime finished = DateTime.now();
+  Duration duration = finished.difference(start);
+  int seconds = duration.inSeconds;
+  int milliseconds = duration.inMilliseconds % 1000;
+  print("QuickSort Finished in $seconds seconds $milliseconds milliseconds");
+  return unsortedList;
 }
 
 void testQuickSortInt(List<int> unsortedList) {
-  unsortedList.sort(quickSortInt);
+  print("Testing Quick Sort Int");
+  timeFunction(() {
+    unsortedList.sort(quickSortInt);
+  });
 }
 
-int quicksortDouble(double a, double b) {
+int quicksortAlgorithmDouble(double a, double b) {
   if (a > b) {
     return 1;
   }

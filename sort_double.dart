@@ -1,13 +1,15 @@
-List pileSortDouble(List<double> unsortedList) {
+List pileSortDouble(List<double> unsortedList, {double min, double max}) {
 
-  double min = unsortedList[0];
-  double max = unsortedList[0];
+  if (min == null) {
+    min = unsortedList[0];
+    max = unsortedList[0];
 
-  for (int i = 0; i < unsortedList.length; i++) {
-    if (unsortedList[i] < min) {
-      min = unsortedList[i];
-    } else if (unsortedList[i] > max) {
-      max = unsortedList[i];
+    for (int i = 0; i < unsortedList.length; i++) {
+      if (unsortedList[i] < min) {
+        min = unsortedList[i];
+      } else if (unsortedList[i] > max) {
+        max = unsortedList[i];
+      }
     }
   }
 
@@ -17,26 +19,38 @@ List pileSortDouble(List<double> unsortedList) {
 
   double range = max - min;
   Map<int, dynamic> piles = Map();
-  int maxIndex = (unsortedList.length - 1);
+//  int maxIndex = (unsortedList.length - 1);
+  int maxIndex = 40000;
+  double indexRange = range / maxIndex;
 
-  unsortedList.forEach((value) {
+  for (double value in unsortedList) {
     double indexDouble = (value - min) / range * maxIndex;
     int index = indexDouble.toInt();
 
-    if (!piles.containsKey(index)) {
-      piles[index] = value;
-    } else if (piles[index] is double) {
-      List<double> list = [piles[index], value];
-      piles[index] = list;
-    } else {
+    if (piles.containsKey(index)) {
       piles[index].add(value);
+    } else {
+      piles[index] = [value];
     }
-  });
+  }
 
   List sortedPiles = List();
 
-//  for (int i = 0; i <= maxIndex; i++) {
-//    if (piles.containsKey(i)) {
+  for (int i = 0; i <= maxIndex; i++) {
+    if (piles.containsKey(i)) {
+      if (piles[i].length > 1) {
+//        sortedPiles.addAll(pilesToList(pileSortDouble(piles[i])));
+
+        // Save left and right boundaries
+//        double mins = min + (indexRange * i);
+//        double maxs = mins + indexRange;
+//        List sortedSubList = pileSortDouble(piles[i]);
+//        sortedPiles.addAll(sortedSubList);
+        sortedPiles.addAll(piles[i]);
+//        sortedPiles.add(testQuickSortDouble(piles[i]));
+      } else {
+        sortedPiles.add(piles[i]);
+      }
 //      if (piles[i] is double) {
 //        sortedPiles.add(piles[i]);
 //      } else {
@@ -45,8 +59,14 @@ List pileSortDouble(List<double> unsortedList) {
 //        List<double> sortedSubList = pilesToList(subPiles);
 //        sortedPiles.add(sortedSubList);
 //      }
-//    }
-//  }
+//        if(piles[i].length > 1){
+//
+//        }else{
+//
+//        }
+
+    }
+  }
   return sortedPiles;
 }
 

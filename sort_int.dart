@@ -43,15 +43,14 @@
 //  return sortedPiles;
 //}
 
-
-
 import 'utility.dart';
 
+// The problem with pile sort is that it becomes increasingly slow as the range increases
+// Solution limit the index count to 100
+// Store pass the min and max values to the recursion
 dynamic pileIntSort(List<int> unsortedList) {
-
   print("PileSortInt Starting");
   DateTime startTime = DateTime.now();
-
 
   int min = unsortedList[0];
   int max = unsortedList[0];
@@ -68,16 +67,17 @@ dynamic pileIntSort(List<int> unsortedList) {
   int maxIndex = range;
   List<List<int>> piles = List(range + 1);
 
-  for(int i = 0; i <= maxIndex; i++){
+  for (int i = 0; i <= maxIndex; i++) {
     piles[i] = [];
   }
 
   for (int i = 0; i < unsortedList.length; i++) {
     int index = (((unsortedList[i] - min) / range) * maxIndex).toInt();
-    piles[index].add(unsortedList[i]);
+    int value = unsortedList[i];
+    piles[index].add(value);
   }
-  var results = piles.fold([], (previous, pile){
-    if(pile != null){
+  var results = piles.fold([], (previous, pile) {
+    if (pile != null) {
       previous.addAll(pile);
     }
     return previous;
@@ -85,68 +85,103 @@ dynamic pileIntSort(List<int> unsortedList) {
 
   DateTime endTime = DateTime.now();
   Duration duration = endTime.difference(startTime);
-  print("PileSort finished sorting ${unsortedList.length} in ${toText(duration)}");
+  print(
+      "PileSort finished sorting ${unsortedList.length} in ${toText(duration)}");
   return results;
-
-//  return piles.where((pile) => pile != null).toList();
 }
 
+dynamic pileIntSortRecursive(List<int> unsortedList, {double min, double max}) {
 
-dynamic pileIntSortCache(List<int> unsortedList) {
+  bool isSubSort = min != null;
+  DateTime startTime;
 
-  print("PileSortInt Cache Starting");
-  DateTime startTime = DateTime.now();
+  if (min == null) {
 
+    print("pileIntSortRecursive Starting");
+    startTime = DateTime.now();
 
-  int min = unsortedList[0];
-  int max = unsortedList[0];
+    int minInt = unsortedList[0];
+    int maxInt = unsortedList[0];
 
-  for (int i = 1; i < unsortedList.length; i++) {
-    if (unsortedList[i] < min) {
-      min = unsortedList[i];
-    } else if (unsortedList[i] > max) {
-      max = unsortedList[i];
+    for (int i = 1; i < unsortedList.length; i++) {
+      if (unsortedList[i] < minInt) {
+        minInt = unsortedList[i];
+      } else if (unsortedList[i] > maxInt) {
+        maxInt = unsortedList[i];
+      }
+    }
+
+    if (minInt == maxInt) {
+      return unsortedList;
+    }
+
+    min = minInt.toDouble();
+    max = maxInt.toDouble();
+  } else {
+    if (min == max) {
+      return [unsortedList];
     }
   }
 
-  int range = max - min;
-  int maxIndex = range - 1;
-//  int length = unsortedList.length;
+  double range = max - min;
 
-  List<List<int>> piles = List(range);
-
-//  List<int> valueIndexCache = List(maxIndex);
-  Map<int, int> valueIndexCache = Map();
-
-  for(int value = min; value <= max; value++){
-    valueIndexCache[value] = (((value - min) / range) * maxIndex).toInt();
+  if (range == 0 || range.isInfinite || range.isNaN) {
+    throw Exception("Range cannot be");
   }
 
-
+  int totalIndexes = unsortedList.length > 100 ? 100 : unsortedList.length;
+  List<List<int>> piles = List(totalIndexes + 1);
 
   for (int i = 0; i < unsortedList.length; i++) {
-//    int index = (((unsortedList[i] - min) / range) * maxIndex).toInt();
-    int index = valueIndexCache[unsortedList[i]];
+    int value = unsortedList[i];
+    int index = (((value - min) / range) * totalIndexes).toInt();
 
     if (piles[index] == null) {
-      piles[index] = [unsortedList[i]];
+      piles[index] = [value];
     } else {
-      piles[index].add(unsortedList[i]);
+      piles[index].add(value);
     }
   }
 
-  var results = piles.fold([], (previous, pile){
-    if(pile != null){
-      previous.addAll(pile);
+  double indexSize = range / totalIndexes;
+
+  for (int i = 0; i < totalIndexes; i++) {
+    double newMin = min + (i * indexSize);
+    double newMax = newMin + indexSize;
+
+    if (piles[i] != null) {
+      if (piles[i].length > 1) {
+        var subPile = pileIntSortRecursive(piles[i],
+            min: newMin, max: newMax);
+
+        List<int> list = [];
+        var unfolded = subPile.fold(list, (previous, pile) {
+          if (pile != null) {
+            previous.addAll(pile);
+          }
+          return previous;
+        });
+
+        piles[i] = unfolded;
+      }
     }
-    return previous;
-  });
+  }
+
+  if (isSubSort) {
+    return piles;
+  }
+
+//  return piles;
+//  var results = piles.fold([], (previous, pile) {
+//    if (pile != null) {
+//      previous.addAll(pile);
+//    }
+//    return previous;
+//  });
 
   DateTime endTime = DateTime.now();
   Duration duration = endTime.difference(startTime);
-  print("PileSort finished sorting ${unsortedList.length} in ${toText(duration)}");
-  return results;
-
-//  return piles.where((pile) => pile != null).toList();
+  print(
+      "PileSort finished sorting ${unsortedList.length} in ${toText(duration)}");
+  return piles;
 }
-

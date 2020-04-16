@@ -7,19 +7,18 @@ int comparisons = 0;
 int calls = 0;
 
 void main() {
-  const int total = 10000000;
+  const int total = 100000;
 
 //  List<double> unsorted = generateRandomDoubles(total: total, max: 1000);
-  List<int> unsorted = generateRandomInts(total: total, max: 1000);
+  List<int> unsorted = generateRandomInts(total: total, max: 10000000);
 
-  print('unsorted lenght ${unsorted.length}');
-
-  try {
 //    List<List<int>> results = testPileSortInt(unsorted);
 //    List results = testPileSortDouble(unsorted);
 //    List sortedPiles = pileSortDouble(unsortedList);
-    var results = pileIntSort(unsorted);
-    testQuickSortInt(unsorted);
+//    pileIntSort(unsorted);
+    var results = pileIntSortRecursive(unsorted);
+//    print(results);
+//    testQuickSortInt(unsorted);
 
 
 
@@ -36,9 +35,6 @@ void main() {
 //    print("Total Elements: $total");
 //    print("Total Arrays: $totalArraysCreated");
 //    print("Total Calls: $calls");
-  } catch (e) {
-    print(e);
-  }
 }
 
 dynamic testPileSortDouble(List<double> unsortedList) {

@@ -43,6 +43,7 @@
 //  return sortedPiles;
 //}
 
+import 'main.dart';
 import 'utility.dart';
 
 // The problem with pile sort is that it becomes increasingly slow as the range increases
@@ -90,7 +91,7 @@ dynamic pileIntSort(List<int> unsortedList) {
   return results;
 }
 
-dynamic pileIntSortRecursive(List<int> unsortedList, {double min, double max}) {
+dynamic pileIntSortRecursive(List<int> unsortedList, {int defaultIndexCount = 100, double min, double max}) {
 
   bool isSubSort = min != null;
   DateTime startTime;
@@ -123,13 +124,20 @@ dynamic pileIntSortRecursive(List<int> unsortedList, {double min, double max}) {
     }
   }
 
-  double range = max - min;
-
-  if (range == 0 || range.isInfinite || range.isNaN) {
-    throw Exception("Range cannot be");
+  if(unsortedList.length < 2){
+    throw Exception("Incorrect");
   }
 
-  int totalIndexes = unsortedList.length > 100 ? 100 : unsortedList.length;
+//  if(unsortedList.length == 2){
+//      if(unsortedList[0] < unsortedList[1]){
+//        return [unsortedList[0], unsortedList[1]];
+//      }else{
+//        return [unsortedList[1], unsortedList[0]];
+//      }
+//  }
+
+  double range = max - min;
+  int totalIndexes = unsortedList.length > defaultIndexCount ? defaultIndexCount : unsortedList.length;
   List<List<int>> piles = List(totalIndexes + 1);
 
   for (int i = 0; i < unsortedList.length; i++) {
@@ -150,26 +158,28 @@ dynamic pileIntSortRecursive(List<int> unsortedList, {double min, double max}) {
     double newMax = newMin + indexSize;
 
     if (piles[i] != null) {
-      if (piles[i].length > 1) {
-        var subPile = pileIntSortRecursive(piles[i],
-            min: newMin, max: newMax);
 
-        List<int> list = [];
-        var unfolded = subPile.fold(list, (previous, pile) {
-          if (pile != null) {
-            previous.addAll(pile);
-          }
-          return previous;
-        });
+//      insertionSort(piles[i]);
+//        var subPile = pileIntSortRecursive(piles[i],
+//            min: newMin, max: newMax);
+//
+//        List<int> list = [];
+//        var unfolded = subPile.fold(list, (previous, pile) {
+//          if (pile != null) {
+//            previous.addAll(pile);
+//          }
+//          return previous;
+//        });
+//
+//        piles[i] = unfolded;
+        piles[i].sort(quickSortInt);
 
-        piles[i] = unfolded;
-      }
     }
   }
 
-  if (isSubSort) {
-    return piles;
-  }
+//  if (isSubSort) {
+//    return piles;
+//  }
 
 //  return piles;
 //  var results = piles.fold([], (previous, pile) {

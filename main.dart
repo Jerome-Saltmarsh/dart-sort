@@ -7,7 +7,7 @@ int comparisons = 0;
 int calls = 0;
 
 void main() {
-  const int total = 100000;
+  const int total = 10000000;
 
 //  List<double> unsorted = generateRandomDoubles(total: total, max: 1000);
   List<int> unsorted = generateRandomInts(total: total, max: 10000000);
@@ -16,9 +16,9 @@ void main() {
 //    List results = testPileSortDouble(unsorted);
 //    List sortedPiles = pileSortDouble(unsortedList);
 //    pileIntSort(unsorted);
-    var results = pileIntSortRecursive(unsorted);
+//    var results = pileIntSortRecursive(unsorted, defaultIndexCount: 30000);
+    testQuickSortInt(unsorted);
 //    print(results);
-//    testQuickSortInt(unsorted);
 
 
 
@@ -99,4 +99,25 @@ int quickSortInt(int a, int b) {
     return -1;
   }
   return 0;
+}
+
+void insertionSort(List<int> list) {
+  // If the same method could have both positional and named optional
+  // parameters, this should be (list, [start, end], {compare}).
+
+  for (int pos = 1; pos < list.length; pos++) {
+    int min = 0;
+    int max = pos;
+    var element = list[pos];
+    while (min < max) {
+      int mid = min + ((max - min) >> 1);
+      if (element < list[mid]) {
+        max = mid;
+      } else {
+        min = mid + 1;
+      }
+    }
+    list.setRange(min + 1, pos + 1, list, min);
+    list[min] = element;
+  }
 }

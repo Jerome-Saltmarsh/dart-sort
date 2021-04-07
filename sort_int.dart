@@ -1,55 +1,5 @@
-//
-//List<List<int>> pileIntSort(List<int> unsortedList) {
-//
-//  int length = unsortedList.length;
-//  int min = unsortedList[0];
-//  int max = unsortedList[0];
-//
-//  for (int i = 0; i < length; i++) {
-//    if (unsortedList[i] < min) {
-//      min = unsortedList[i];
-//    } else if (unsortedList[i] > max) {
-//      max = unsortedList[i];
-//    }
-//  }
-//
-//  if (max == min) {
-//    return [unsortedList];
-//  }
-//
-//  int range = max - min;
-//  Map<int, List<int>> piles = Map();
-//  int maxIndex = length - 1;
-//
-//  for (int i = 0; i < length; i++) {
-//
-//    int index = (((unsortedList[i] - min) / range) * maxIndex).toInt();
-//
-//    if (piles.containsKey(index)) {
-//      piles[index].add(unsortedList[i]);
-//    } else {
-//      piles[index] = [unsortedList[i]];
-//    }
-//  }
-//
-//  List<List<int>> sortedPiles = List();
-//
-//  for (int i = 0; i < maxIndex; i++) {
-//    if (piles.containsKey(i)) {
-//      sortedPiles.add(piles[i]);
-//    }
-//  }
-//
-//  return sortedPiles;
-//}
-
-import 'main.dart';
-import 'utility.dart';
-
-// The problem with pile sort is that it becomes increasingly slow as the range increases
-// Solution limit the index count to 100
 // Store pass the min and max values to the recursion
-dynamic pileIntSort(List<int> unsortedList) {
+void pileIntSort(List<int> unsortedList) {
   print("PileSortInt Starting");
   DateTime startTime = DateTime.now();
 
@@ -65,133 +15,180 @@ dynamic pileIntSort(List<int> unsortedList) {
   }
 
   int range = max - min;
-  int maxIndex = range;
-  List<List<int>> piles = List(range + 1);
+  int defaultIndexCount = 10000;
+  int totalIndexes = unsortedList.length > defaultIndexCount
+      ? defaultIndexCount
+      : unsortedList.length;
 
-  for (int i = 0; i <= maxIndex; i++) {
-    piles[i] = [];
-  }
-
-  for (int i = 0; i < unsortedList.length; i++) {
-    int index = (((unsortedList[i] - min) / range) * maxIndex).toInt();
-    int value = unsortedList[i];
-    piles[index].add(value);
-  }
-  var results = piles.fold([], (previous, pile) {
-    if (pile != null) {
-      previous.addAll(pile);
-    }
-    return previous;
-  });
-
-  DateTime endTime = DateTime.now();
-  Duration duration = endTime.difference(startTime);
-  print(
-      "PileSort finished sorting ${unsortedList.length} in ${toText(duration)}");
-  return results;
-}
-
-dynamic pileIntSortRecursive(List<int> unsortedList, {int defaultIndexCount = 100, double min, double max}) {
-
-  bool isSubSort = min != null;
-  DateTime startTime;
-
-  if (min == null) {
-
-    print("pileIntSortRecursive Starting");
-    startTime = DateTime.now();
-
-    int minInt = unsortedList[0];
-    int maxInt = unsortedList[0];
-
-    for (int i = 1; i < unsortedList.length; i++) {
-      if (unsortedList[i] < minInt) {
-        minInt = unsortedList[i];
-      } else if (unsortedList[i] > maxInt) {
-        maxInt = unsortedList[i];
-      }
-    }
-
-    if (minInt == maxInt) {
-      return unsortedList;
-    }
-
-    min = minInt.toDouble();
-    max = maxInt.toDouble();
-  } else {
-    if (min == max) {
-      return [unsortedList];
-    }
-  }
-
-  if(unsortedList.length < 2){
-    throw Exception("Incorrect");
-  }
-
-//  if(unsortedList.length == 2){
-//      if(unsortedList[0] < unsortedList[1]){
-//        return [unsortedList[0], unsortedList[1]];
-//      }else{
-//        return [unsortedList[1], unsortedList[0]];
-//      }
-//  }
-
-  double range = max - min;
-  int totalIndexes = unsortedList.length > defaultIndexCount ? defaultIndexCount : unsortedList.length;
   List<List<int>> piles = List(totalIndexes + 1);
 
   for (int i = 0; i < unsortedList.length; i++) {
     int value = unsortedList[i];
-    int index = (((value - min) / range) * totalIndexes).toInt();
+    double indexDouble = ((value - min) / range * totalIndexes);
+    int index = indexDouble.toInt();
+
 
     if (piles[index] == null) {
       piles[index] = [value];
     } else {
-      piles[index].add(value);
+//      piles[index].add(value);
+      double remainder = indexDouble % index;
+      int l = piles[index].length;
+      double subIndex = remainder * piles[index].length * 10;
+      int subIndexInt = subIndex.toInt();
+
+      if(remainder < 0.5){
+        piles[index].insert(0, value);
+      }else{
+        piles[index].add(value);
+      }
     }
   }
 
-  double indexSize = range / totalIndexes;
+  int currentPile = 0;
+  int currentPileIndex = 0;
+  for (int i = 0; i < unsortedList.length; i++) {
+    while (piles[currentPile] == null) {
+      currentPile++;
+    }
 
-  for (int i = 0; i < totalIndexes; i++) {
-    double newMin = min + (i * indexSize);
-    double newMax = newMin + indexSize;
+    unsortedList[i] = piles[currentPile][currentPileIndex];
+    currentPileIndex++;
 
-    if (piles[i] != null) {
-
-//      insertionSort(piles[i]);
-//        var subPile = pileIntSortRecursive(piles[i],
-//            min: newMin, max: newMax);
-//
-//        List<int> list = [];
-//        var unfolded = subPile.fold(list, (previous, pile) {
-//          if (pile != null) {
-//            previous.addAll(pile);
-//          }
-//          return previous;
-//        });
-//
-//        piles[i] = unfolded;
-        piles[i].sort(quickSortInt);
-
+    if (currentPileIndex == piles[currentPile].length) {
+      currentPileIndex = 0;
+      currentPile++;
     }
   }
-
-//  if (isSubSort) {
-//    return piles;
-//  }
-
-//  return piles;
-//  var results = piles.fold([], (previous, pile) {
-//    if (pile != null) {
-//      previous.addAll(pile);
-//    }
-//    return previous;
-//  });
 
   DateTime endTime = DateTime.now();
   Duration duration = endTime.difference(startTime);
-  print(
-      "PileSort finished sorting ${unsortedList.length} in ${toText(duration)}");
-  return piles;
 }
+
+void tradeSort(List<int> values) {
+  int min = values[0];
+  int max = values[0];
+
+  for (int i = 1; i < values.length; i++) {
+    if (values[i] < min) {
+      min = values[i];
+    } else if (values[i] > max) {
+      max = values[i];
+    }
+  }
+
+  int range = max - min;
+  int defaultIndexCount = 10000;
+  int totalIndexes =
+      values.length > defaultIndexCount ? defaultIndexCount : values.length;
+
+  Function getIndexOf = (int val) {
+    return ((val - min) / range * totalIndexes).toInt();
+  };
+
+  int value = values[0];
+  int targetIndex = getIndexOf(value);
+//  swapInto(values, value, targetIndex, getIndexOf);
+  print("Swaps $totalSwaps");
+
+  while (true) {
+    int placeHolder = values[targetIndex];
+    int placeHoldersIndex = getIndexOf(placeHolder);
+
+    if (placeHoldersIndex != targetIndex) {
+      values[targetIndex] = value;
+      print("Swapped value: $value into index: $targetIndex");
+      value = placeHolder;
+      targetIndex = placeHoldersIndex;
+    } else {
+      if (placeHolder == value) {
+        bool positionFound = false;
+        while (targetIndex >= 0) {
+          targetIndex--;
+          int lowerVal = values[targetIndex];
+          if (lowerVal > value) {
+            // swap the value into the lower val's position
+            positionFound = true;
+            break;
+          }
+        }
+        if (!positionFound) {
+          while (targetIndex < values.length) {
+            targetIndex++;
+            int lowerVal = values[targetIndex];
+            lowerVal < value;
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
+int totalSwaps = 0;
+
+Function swapInto =
+    (List<int> values, int value, int index, Function getIndexOf) {
+  totalSwaps++;
+
+  if (index >= values.length) {
+//    throw Exception("What?");
+    index--;
+  }
+  int placeHolder = values[index];
+  int placeHoldersIndex = getIndexOf(placeHolder);
+
+  if (placeHoldersIndex != index) {
+    values[index] = value;
+    print("Swapped value: $value into index: $index");
+    swapInto(values, placeHolder, placeHoldersIndex, getIndexOf);
+    return;
+  }
+
+  if (placeHolder == value) {
+    int searchIndex = index;
+    while (searchIndex < values.length) {
+      print("SearchIndex $searchIndex");
+      int valueAtSearchIndex = values[searchIndex];
+      if (valueAtSearchIndex == value) {
+        searchIndex++;
+      } else {
+        if (valueAtSearchIndex < value) {
+          int nextIndex = getIndexOf(valueAtSearchIndex);
+          swapInto(values, valueAtSearchIndex, nextIndex, getIndexOf);
+          return;
+        } else {
+          print("Breaking");
+          break;
+        }
+      }
+    }
+
+    while (searchIndex >= 0) {
+      print("SearchIndex $searchIndex");
+      int valueAtSearchIndex = values[searchIndex];
+      if (valueAtSearchIndex == value) {
+        searchIndex--;
+      } else {
+        if (valueAtSearchIndex > value) {
+          int nextIndex = getIndexOf(valueAtSearchIndex);
+          swapInto(values, valueAtSearchIndex, nextIndex, getIndexOf);
+          return;
+        }
+      }
+    }
+
+    print("Reached end");
+    return;
+  }
+
+  // if the place holder already is in the correct index
+  if (placeHolder > value) {
+    swapInto(values, value, index - 1, getIndexOf);
+    return;
+  }
+  if (placeHolder < value) {
+    swapInto(values, value, index + 1, getIndexOf);
+    return;
+  }
+};

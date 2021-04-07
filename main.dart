@@ -1,40 +1,20 @@
+import 'block_sort.dart';
 import 'sort_double.dart';
-import 'sort_int.dart';
 import 'utility.dart';
 
-int totalArraysCreated = 0;
-int comparisons = 0;
-int calls = 0;
 
 void main() {
-  const int total = 10000000;
+  List<int> unsorted = generateRandomInts(total: 1000, max: 1000, includeNegatives: true);
 
-//  List<double> unsorted = generateRandomDoubles(total: total, max: 1000);
-  List<int> unsorted = generateRandomInts(total: total, max: 10000000);
+  timeFunction((){
+//    List(100000000);
+//    List.filled(100000000, 0);
+//    skipAndSwap(unsorted);
+    skipAndSort(unsorted);
+//    unsorted.sort();
+  });
 
-//    List<List<int>> results = testPileSortInt(unsorted);
-//    List results = testPileSortDouble(unsorted);
-//    List sortedPiles = pileSortDouble(unsortedList);
-//    pileIntSort(unsorted);
-//    var results = pileIntSortRecursive(unsorted, defaultIndexCount: 30000);
-    testQuickSortInt(unsorted);
-//    print(results);
-
-
-
-
-//      print(results);
-//     testQuickSortDouble(unsorted);
-
-//    List<double> sortedNumbers = pilesToList(sortedPiles);
-//    List<double> sorted = pilesToList(results);
-//    errorCheck(sorted, unsorted);
-//    print("Sorted Piles");
-//    print(unsortedList);
-//    print(sortedNumbers);
-//    print("Total Elements: $total");
-//    print("Total Arrays: $totalArraysCreated");
-//    print("Total Calls: $calls");
+//  print(unsorted);
 }
 
 dynamic testPileSortDouble(List<double> unsortedList) {

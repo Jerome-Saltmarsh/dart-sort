@@ -182,9 +182,13 @@ void insertionSort(List<int> a, int left, int right) {
 
 void megaSort(List<int> list) {
   int length = list.length;
+
+  if(length < 10) return;
+
   int lengthMinusOne = length - 1;
   int min = 0;
   int max = 0;
+
 
   for (int i = 0; i < length; i++) {
     if (list[i] < min) {
@@ -195,6 +199,9 @@ void megaSort(List<int> list) {
   }
 
   int range = max - min;
+
+  if(range == 0) return;
+
   int sectionWidth = range ~/  3;
 
   int abPivot = min + sectionWidth;
@@ -221,13 +228,12 @@ void megaSort(List<int> list) {
   int swapValue = -1;
 
   while (true) {
-
+    swapValue = value;
     if (value < abPivot) {
-      while(list[indexA] < abPivot){
+      while (list[indexA] < abPivot) {
         // print("${list[indexA]} already in section a.");
         indexA++;
       }
-      swapValue = value;
       value = list[indexA];
       list[indexA] = swapValue;
       // print("$value swapped with ${swapValue} at $indexA");
@@ -237,25 +243,93 @@ void megaSort(List<int> list) {
       while(list[indexB] >= abPivot && list[indexB] < bcPivot){
         indexB++;
       }
-      swapValue = value;
       value = list[indexB];
       list[indexB] = swapValue;
     }
 
     else {
-      while(list[indexC] >= bcPivot){
+      while (list[indexC] >= bcPivot) {
         indexC++;
-        if(indexC == lengthMinusOne){
+        if(indexC == lengthMinusOne) {
+          boundedMegaSort(list, 0, aSize, min, abPivot);
+          boundedMegaSort(list, aSize, aSize + bSize, abPivot, bcPivot);
+          boundedMegaSort(list, aSize + bSize, lengthMinusOne, bcPivot, max);
           return;
         }
       }
-      swapValue = value;
       value = list[indexC];
       list[indexC] = swapValue;
-
-      if(indexC == lengthMinusOne){
-        return;
-      }
     }
   }
 }
+
+void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
+  int length = end - start;
+
+  if(length < 10) return;
+
+  int lengthMinusOne = length - 1;
+  int range = max - min;
+
+  if(range == 0) return;
+
+  int sectionWidth = range ~/  3;
+
+  int abPivot = min + sectionWidth;
+  int bcPivot = abPivot + sectionWidth;
+
+  int aSize = 0;
+  int bSize = 0;
+
+  for (int i = start; i < end; i++) {
+    if (list[i] < abPivot) {
+      aSize++;
+    } else if (list[i] < bcPivot) {
+      bSize++;
+    }
+  }
+
+  // print('min: $min, max: $max, range: $range, abPivot: $abPivot, bcPivot: $bcPivot, aSize:$aSize, bSize: $bSize, cSize:${length - aSize - bSize}');
+
+  int indexA = start;
+  int indexB = start + aSize;
+  int indexC = start + aSize + bSize;
+
+  int value = list[length - 1];
+  int swapValue = -1;
+  int finish = start + lengthMinusOne;
+
+  while (true) {
+    swapValue = value;
+    if (value < abPivot) {
+      while (list[indexA] < abPivot) {
+        // print("${list[indexA]} already in section a.");
+        indexA++;
+      }
+      value = list[indexA];
+      list[indexA] = swapValue;
+      // print("$value swapped with ${swapValue} at $indexA");
+    }
+
+    else if (value < bcPivot) {
+      while(list[indexB] >= abPivot && list[indexB] < bcPivot){
+        indexB++;
+      }
+      value = list[indexB];
+      list[indexB] = swapValue;
+    }
+
+    else {
+      while (list[indexC] >= bcPivot) {
+        indexC++;
+
+        if(indexC == finish) {
+          return;
+        }
+      }
+      value = list[indexC];
+      list[indexC] = swapValue;
+    }
+  }
+}
+

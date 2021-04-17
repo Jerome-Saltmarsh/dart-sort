@@ -2,27 +2,22 @@ import 'fast-sort.dart';
 import 'items.dart';
 
 void main() {
-  randomItems = randomInts(100000);
-  // timeFunction(sortRandomItems, name: 'Mega Sort ${randomItems.length} items');
+  randomItems = randomInts(1000);
+  timeFunction(megaSortItems, name: 'Mega Sort ${randomItems.length} items');
   // randomize();
-  timeFunction(testOfficialSort, name: 'Official ${randomItems.length}');
-  // print(randomItems);
-
+  // timeFunction(testOfficialSort, name: 'Official ${randomItems.length}');
+  print(randomItems);
 }
 
 void randomize(){
   randomItems.shuffle();
 }
 
-void sortRandomItems(){
+void megaSortItems(){
   megaSort(randomItems);
 }
 
-void testOfficialSort(){
+void quickSortItems(){
   officialSort(randomItems);
-}
-
-void testMySort(){
-  megaSort(randomItems);
 }
 

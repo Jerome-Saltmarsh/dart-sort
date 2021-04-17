@@ -182,13 +182,9 @@ void insertionSort(List<int> a, int left, int right) {
 
 void megaSort(List<int> list) {
   int length = list.length;
-
-  // if(length < 10) return;
-
   int lengthMinusOne = length - 1;
   int min = 0;
   int max = 0;
-
 
   for (int i = 0; i < length; i++) {
     if (list[i] < min) {
@@ -263,75 +259,164 @@ void megaSort(List<int> list) {
   }
 }
 
+/**
+ * Only by developing a deep understanding of the different kinds of sorting algorithms can you hope to improve upon them
+ *
+ * Merge Sort
+ *
+ * Quick Sort
+ *
+ * Insertion Sort
+ *
+ * Bubble Sort
+ *
+ * Heap Sort
+ *
+ * Identifying particularly difficult orders to sort.
+ *
+ * <Algorithm Types>
+ *    Divide and Conquer
+ *
+ *
+ * smart html.
+ *
+ * Design an expressive html language.
+ * That would be the most useful tool you could create.
+ *
+ * Currently html is a mark up language. But its a language without logic.
+ *
+ * Html Script
+ *
+ * // code is all lowercase.
+ * // String values can contain capitals
+ *
+ * // html script supports variables
+ *
+ * // tags are used to instant a class
+ * //
+ *
+ * const world = 'world'
+ *
+ * <content axis: x main: start cross: end>
+ *   <text 'hello'>
+ *   <text world> // pass the world variable
+ *   build_hello_world('greetings')
+ *
+ * // write functions
+ * hello-world(string message)
+ *   <text 'message received'>
+ *   <text message>
+ * } // set the end of the function
+ *
+ * <hello-world {message: 'hello'}>
+ *
+ * // if a composure function only takes a single argument it can be called using the short format
+ * <hello-world({message: 'hello'}>
+ *
+ *  // assign values to variables
+ *  test = 'hello this is a test'
+ *  <hello-world: test> // call hello world function and pass the variable test
+ *
+ *  <build-container { int width, int height, hexidecimal color }
+ *      area = width * height
+ *  >
+ *
+ *  <customer { first_name: 'foo', last_name: 'bar', age: 35 } >
+ *
+ * <define customer: {
+ *    str first_name
+ *    str last_name
+ *    int age
+ *
+ *    const adult: 18
+ *
+ *    get full_name {
+ *      return '$firstname $last_name
+ *    }
+ * }>
+ *
+ * // all data is passed as json
+ */
 void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
   int length = end - start;
 
-  if(length < 10) return;
+  if (length < 10) {
+    return;
+  }
 
-  int lengthMinusOne = length - 1;
+  // if (length < 16) {
+  //   return;
+  //   // bool inOrder = true;
+  //   // for(int i = start; i < end - 1; i++){
+  //   //   if(list[i] > list[i + 1]){
+  //   //     inOrder = false;
+  //   //     break;
+  //   //   }
+  //   // }
+  //   // if(inOrder) return;
+  // }
   int range = max - min;
-
-  if(range == 0) return;
-
+  if (range <= 1) return;
   int sectionWidth = range ~/  3;
+  int pivotAB = min + sectionWidth;
+  int pivotBC = pivotAB + sectionWidth;
+  if (pivotAB == pivotBC) return;
 
-  int abPivot = min + sectionWidth;
-  int bcPivot = abPivot + sectionWidth;
-
-  int aSize = 0;
-  int bSize = 0;
+  int sizeA = 0;
+  int sizeB = 0;
 
   for (int i = start; i < end; i++) {
-    if (list[i] < abPivot) {
-      aSize++;
-    } else if (list[i] < bcPivot) {
-      bSize++;
+    if (list[i] < pivotAB) {
+      sizeA++;
+    } else if (list[i] < pivotBC) {
+      sizeB++;
     }
   }
 
+  int sizeC = length - sizeA - sizeB;
   // print('min: $min, max: $max, range: $range, abPivot: $abPivot, bcPivot: $bcPivot, aSize:$aSize, bSize: $bSize, cSize:${length - aSize - bSize}');
 
   int indexA = start;
-  int indexB = start + aSize;
-  int indexC = start + aSize + bSize;
+  int indexB = start + sizeA;
+  int indexC = indexB + sizeB;
 
   int value = list[length - 1];
   int swapValue = -1;
-  int finish = start + lengthMinusOne;
-
+  int finish = start + length - 1;
   while (true) {
+
     swapValue = value;
-    if (value < abPivot) {
-      while (list[indexA] < abPivot) {
-        // print("${list[indexA]} already in section a.");
+    if (value < pivotAB) {
+      while (list[indexA] < pivotAB) {
         indexA++;
       }
       value = list[indexA];
       list[indexA] = swapValue;
-      // print("$value swapped with ${swapValue} at $indexA");
+      print("$value replaced ${swapValue} at indexA: $indexA. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
     }
 
-    else if (value < bcPivot) {
-      while(list[indexB] >= abPivot && list[indexB] < bcPivot){
+    else if (value < pivotBC) {
+      while(list[indexB] >= pivotAB && list[indexB] < pivotBC){
         indexB++;
       }
       value = list[indexB];
       list[indexB] = swapValue;
+      print("$value replaced ${swapValue} at indexB: $indexB. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
     }
 
     else {
-      while (list[indexC] >= bcPivot) {
+      while (list[indexC] >= pivotBC) {
         indexC++;
-
-        if(indexC == finish) {
-          boundedMegaSort(list, start, aSize, min, abPivot);
-          // boundedMegaSort(list, start + aSize, start + aSize + bSize, abPivot, bcPivot);
-          // boundedMegaSort(list, aSize + bSize, lengthMinusOne, bcPivot, max);
+        if (indexC == finish) {
+          boundedMegaSort(list, start, sizeA, min, pivotAB);
+          boundedMegaSort(list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
+          boundedMegaSort(list, start + sizeA + sizeB, start + length, pivotBC, max);
           return;
         }
       }
       value = list[indexC];
       list[indexC] = swapValue;
+      print("$value replaced ${swapValue} at indexC: $indexC. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
     }
   }
 }

@@ -183,7 +183,7 @@ void insertionSort(List<int> a, int left, int right) {
 void megaSort(List<int> list) {
   int length = list.length;
 
-  if(length < 10) return;
+  // if(length < 10) return;
 
   int lengthMinusOne = length - 1;
   int min = 0;
@@ -324,6 +324,9 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
         indexC++;
 
         if(indexC == finish) {
+          boundedMegaSort(list, start, aSize, min, abPivot);
+          // boundedMegaSort(list, start + aSize, start + aSize + bSize, abPivot, bcPivot);
+          // boundedMegaSort(list, aSize + bSize, lengthMinusOne, bcPivot, max);
           return;
         }
       }

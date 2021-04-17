@@ -2,7 +2,7 @@ import 'fast-sort.dart';
 import 'items.dart';
 
 void main() {
-  randomItems = randomInts(10000);
+  randomItems = randomInts(100000);
   // timeFunction(sortRandomItems, name: 'Mega Sort ${randomItems.length} items');
   // randomize();
   timeFunction(testOfficialSort, name: 'Official ${randomItems.length}');

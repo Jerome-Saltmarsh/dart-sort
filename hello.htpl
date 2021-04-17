@@ -1,1 +1,6 @@
-<text: 'hello world'>
+<text value:'hello world'>
+
+name: 'hello world';
+<text value:name>
+
+<text value:name color:'red' size:25>

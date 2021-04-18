@@ -6,7 +6,8 @@ import 'items.dart';
 void main() {
   items = generate_random_list(10000);
   time_function(master_sort_items, name: 'master-sort ${items.length} items');
-  print(items);
+  // time_function(quick_sort_items, name: 'Official ${items.length}');
+  // print(items);
 }
 
 void shuffle_items(){

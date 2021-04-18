@@ -107,9 +107,17 @@ void master_sort(List<int> list) {
 }
 
 void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
-  int length = end - start;
   int range = max - min;
   if (range <= 1) return;
+
+  int firstOutOfPlaceIndex = -1;
+  for(int i = start; i < end - 1; i++){
+    if(list[i] > list[i + 1]){
+      firstOutOfPlaceIndex = i;
+      break;
+    }
+  }
+  if (firstOutOfPlaceIndex == -1) return; // the list is in order
 
   // todo the range determines how many pivots are needed
 
@@ -129,25 +137,13 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
     }
   }
 
+  int length = end - start;
   int sizeC = length - sizeA - sizeB;
   // print('min: $min, max: $max, range: $range, abPivot: $abPivot, bcPivot: $bcPivot, aSize:$aSize, bSize: $bSize, cSize:${length - aSize - bSize}');
 
   int indexA = start;
   int indexB = start + sizeA;
   int indexC = indexB + sizeB;
-
-  if(length - 1 >= list.length || length <= 0){
-    print('break');
-  }
-
-  int firstOutOfPlaceIndex = -1;
-  for(int i = start; i < end - 1; i++){
-    if(list[i] > list[i + 1]){
-      firstOutOfPlaceIndex = i;
-      break;
-    }
-  }
-  if (firstOutOfPlaceIndex == -1) return; // the list is in order
 
   int value = list[end - 1];
   int swapValue = -1;

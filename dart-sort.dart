@@ -43,19 +43,23 @@ void master_sort(List<int> list) {
 
   if (range == 0) return;
 
-  int sectionWidth = range ~/ 3;
+  int sectionWidth = range ~/ 4;
 
   int abPivot = min + sectionWidth;
   int bcPivot = abPivot + sectionWidth;
+  int cdPivot = bcPivot + sectionWidth;
 
   int aSize = 0;
   int bSize = 0;
+  int cSize = 0;
 
   for (int i = 0; i < length; i++) {
     if (list[i] < abPivot) {
       aSize++;
     } else if (list[i] < bcPivot) {
       bSize++;
+    } else if (list[i] < cdPivot) {
+      cSize++;
     }
   }
 
@@ -64,6 +68,7 @@ void master_sort(List<int> list) {
   int indexA = 0;
   int indexB = aSize;
   int indexC = aSize + bSize;
+  int indexD = aSize + bSize + cSize;
 
   int value = list[length - 1];
   int swapValue = -1;
@@ -72,26 +77,30 @@ void master_sort(List<int> list) {
     swapValue = value;
     if (value < abPivot) {
       while (list[indexA] < abPivot) {
-        // print("${list[indexA]} already in section a.");
         indexA++;
       }
       value = list[indexA];
       list[indexA] = swapValue;
-      // print("$value swapped with ${swapValue} at $indexA");
     } else if (value < bcPivot) {
       while (list[indexB] >= abPivot && list[indexB] < bcPivot) {
         indexB++;
       }
       value = list[indexB];
       list[indexB] = swapValue;
-    } else {
-      while (list[indexC] >= bcPivot) {
+    } else if (value < cdPivot) {
+      while (list[indexC] >= bcPivot && list[indexC] < cdPivot) {
         indexC++;
-        if (indexC == length) {
+      }
+      value = list[indexC];
+      list[indexC] = swapValue;
+    } else {
+      while (list[indexD] >= cdPivot) {
+        indexD++;
+        if (indexD == length) {
           if (sectionWidth > 16) {
-            boundedMegaSort(list, 0, aSize, min, abPivot);
-            boundedMegaSort(list, aSize, aSize + bSize, abPivot, bcPivot);
-            boundedMegaSort(list, aSize + bSize, length, bcPivot, max);
+            masterSortBounded(list, 0, aSize, min, abPivot);
+            masterSortBounded(list, aSize, aSize + bSize, abPivot, bcPivot);
+            masterSortBounded(list, aSize + bSize, length, bcPivot, max);
           } else {
             insertionSort(list, 0, aSize);
             insertionSort(list, aSize, aSize + bSize);
@@ -100,55 +109,66 @@ void master_sort(List<int> list) {
           return;
         }
       }
-      value = list[indexC];
-      list[indexC] = swapValue;
+      value = list[indexD];
+      list[indexD] = swapValue;
     }
   }
 }
 
-void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
+void masterSortBounded(List<int> list, int start, int end, int min, int max) {
   int range = max - min;
   if (range <= 1) return;
 
   int firstOutOfPlaceIndex = -1;
   for(int i = start; i < end - 1; i++){
     if(list[i] > list[i + 1]){
-      firstOutOfPlaceIndex = i;
+      firstOutOfPlaceIndex = i + 1;
       break;
     }
   }
   if (firstOutOfPlaceIndex == -1) return; // the list is in order
 
   // todo the range determines how many pivots are needed
-
-  int sectionWidth = range ~/ 3;
+  int sectionWidth = range ~/ 4;
   int pivotAB = min + sectionWidth;
   int pivotBC = pivotAB + sectionWidth;
+  int pivotCD = pivotBC + sectionWidth;
   if (pivotAB == pivotBC) return;
 
   int sizeA = 0;
   int sizeB = 0;
+  int sizeC = 0;
 
   for (int i = start; i < end; i++) {
     if (list[i] < pivotAB) {
       sizeA++;
     } else if (list[i] < pivotBC) {
       sizeB++;
+    } else if (list[i] < pivotCD) {
+      sizeC++;
     }
   }
 
   int length = end - start;
-  int sizeC = length - sizeA - sizeB;
+  int sizeD = length - sizeA - sizeB - sizeC;
   // print('min: $min, max: $max, range: $range, abPivot: $abPivot, bcPivot: $bcPivot, aSize:$aSize, bSize: $bSize, cSize:${length - aSize - bSize}');
 
   int indexA = start;
   int indexB = start + sizeA;
   int indexC = indexB + sizeB;
+  int indexD = indexC + sizeC;
 
   int value = list[end - 1];
   int swapValue = -1;
   int finish = end - 1;
-  while (true) {
+
+  // print("swapping first and last");
+  // int last = list[end - 1];
+  // int outOfPlaceValue = list[firstOutOfPlaceIndex];
+  // list[firstOutOfPlaceIndex] = last;
+  // list[end - 1] = outOfPlaceValue;
+
+  for(int z = 0; z < length; z++) {
     swapValue = value;
     if (value < pivotAB) {
       while (list[indexA] < pivotAB) {
@@ -164,30 +184,43 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
       value = list[indexB];
       list[indexB] = swapValue;
       // print("$value replaced ${swapValue} at indexB: $indexB. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
-    } else {
-      while (list[indexC] >= pivotBC) {
+    } else if (value < pivotCD) {
+      while (list[indexC] >= pivotBC && list[indexC] < pivotCD) {
         indexC++;
-        if (indexC == finish) {
-          if (sizeA > 16) {
-            boundedMegaSort(list, start, start + sizeA, min, pivotAB);
+      }
+      value = list[indexC];
+      list[indexC] = swapValue;
+      // print("$value replaced ${swapValue} at indexC: $indexB. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
+    }
+    else {
+      while (list[indexD] >= pivotCD) {
+        indexD++;
+        if (indexD >= finish) {
+          if (sizeA > 10) {
+            masterSortBounded(list, start, start + sizeA, min, pivotAB);
           } else {
             insertionSort(list, start, start + sizeA);
           }
-          if (sizeB > 16) {
-            boundedMegaSort(list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
+          if (sizeB > 10) {
+            masterSortBounded(list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
           } else {
             insertionSort(list, start + sizeA, start + sizeA + sizeB);
           }
-          if (sizeC > 16) {
-            boundedMegaSort(list, start + sizeA + sizeB, end - 1, pivotBC, max);
+          if (sizeC > 10) {
+            masterSortBounded(list, start + sizeA + sizeB, end - 1, pivotBC, max);
+          } else {
+            insertionSort(list, start + sizeA + sizeB, end - 1);
+          }
+          if (sizeC > 10) {
+            masterSortBounded(list, start + sizeA + sizeB, end - 1, pivotBC, max);
           } else {
             insertionSort(list, start + sizeA + sizeB, end - 1);
           }
           return;
         }
       }
-      value = list[indexC];
-      list[indexC] = swapValue;
+      value = list[indexD];
+      list[indexD] = swapValue;
       // print("$value replaced ${swapValue} at indexC: $indexC. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
     }
   }

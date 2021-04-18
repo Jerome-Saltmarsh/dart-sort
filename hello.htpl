@@ -1,6 +1,29 @@
 <text value:'hello world'>
-
-name: 'hello world';
+name: 'hello world'
 <text value:name>
+text('hello world')
+<text value:name padding: 20px>
+<text value:name color:red size:25>
+<text value:'click me' dispatch:hello>
+<div text="hello world" size=28/>
 
-<text value:name color:'red' size:25>
+text('hello')
+text('world')
+<text='hello'>
+
+
+
+build_customer(string first_name) {
+    <div layout: x_start_center>
+        <div text=first_name size=28/>
+        <div text="hello world" size=28 dispatch='test action'/>
+    </div>
+}
+
+
+hello_world(){
+
+}
+
+
+

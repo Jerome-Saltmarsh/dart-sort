@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Supersort.iml" filepath="$PROJECT_DIR$/.idea/Supersort.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/dart-sort.iml" filepath="$PROJECT_DIR$/.idea/dart-sort.iml" />
     </modules>
   </component>
 </project>

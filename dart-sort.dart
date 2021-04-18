@@ -168,21 +168,20 @@ void printDifference(String name, DateTime a, DateTime b) {
   print("name: $name, seconds: $seconds, milliseconds:$milliseconds");
 }
 
-void insertionSort(List<int> a, int left, int right) {
+void insertionSort(List<int> list, int left, int right) {
   for (int i = left + 1; i <= right; i++) {
-    var el = a[i];
+    var item = list[i];
     int j = i;
-    while ((j > left) && (a[j - 1] > el)) {
-      a[j] = a[j - 1];
+    while ((j > left) && (list[j - 1] > item)) {
+      list[j] = list[j - 1];
       j--;
     }
-    a[j] = el;
+    list[j] = item;
   }
 }
 
 void megaSort(List<int> list) {
   int length = list.length;
-  int lengthMinusOne = length - 1;
   int min = 0;
   int max = 0;
 
@@ -246,10 +245,10 @@ void megaSort(List<int> list) {
     else {
       while (list[indexC] >= bcPivot) {
         indexC++;
-        if(indexC == lengthMinusOne) {
+        if(indexC == length) {
           boundedMegaSort(list, 0, aSize, min, abPivot);
           boundedMegaSort(list, aSize, aSize + bSize, abPivot, bcPivot);
-          boundedMegaSort(list, aSize + bSize, lengthMinusOne, bcPivot, max);
+          boundedMegaSort(list, aSize + bSize, length, bcPivot, max);
           return;
         }
       }
@@ -258,6 +257,81 @@ void megaSort(List<int> list) {
     }
   }
 }
+
+void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
+  int length = end - start;
+
+  if (length < 16) {
+    insertionSort(list, start, end - 1);
+    return;
+  }
+
+  int range = max - min;
+  if (range <= 1) return;
+  int sectionWidth = range ~/  3;
+  int pivotAB = min + sectionWidth;
+  int pivotBC = pivotAB + sectionWidth;
+  if (pivotAB == pivotBC) return;
+
+  int sizeA = 0;
+  int sizeB = 0;
+
+  for (int i = start; i < end; i++) {
+    if (list[i] < pivotAB) {
+      sizeA++;
+    } else if (list[i] < pivotBC) {
+      sizeB++;
+    }
+  }
+
+  int sizeC = length - sizeA - sizeB;
+  // print('min: $min, max: $max, range: $range, abPivot: $abPivot, bcPivot: $bcPivot, aSize:$aSize, bSize: $bSize, cSize:${length - aSize - bSize}');
+
+  int indexA = start;
+  int indexB = start + sizeA;
+  int indexC = indexB + sizeB;
+
+  int value = list[length - 1];
+  int swapValue = -1;
+  int finish = start + length - 1;
+  while (true) {
+
+    swapValue = value;
+    if (value < pivotAB) {
+      while (list[indexA] < pivotAB) {
+        indexA++;
+      }
+      value = list[indexA];
+      list[indexA] = swapValue;
+      // print("$value replaced ${swapValue} at indexA: $indexA. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
+    }
+
+    else if (value < pivotBC) {
+      while(list[indexB] >= pivotAB && list[indexB] < pivotBC){
+        indexB++;
+      }
+      value = list[indexB];
+      list[indexB] = swapValue;
+      // print("$value replaced ${swapValue} at indexB: $indexB. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
+    }
+
+    else {
+      while (list[indexC] >= pivotBC) {
+        indexC++;
+        if (indexC == finish) {
+          boundedMegaSort(list, start, sizeA, min, pivotAB);
+          boundedMegaSort(list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
+          boundedMegaSort(list, start + sizeA + sizeB, start + length, pivotBC, max);
+          return;
+        }
+      }
+      value = list[indexC];
+      list[indexC] = swapValue;
+      // print("$value replaced ${swapValue} at indexC: $indexC. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
+    }
+  }
+}
+
 
 /**
  * Only by developing a deep understanding of the different kinds of sorting algorithms can you hope to improve upon them
@@ -337,87 +411,3 @@ void megaSort(List<int> list) {
  *
  * // all data is passed as json
  */
-void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
-  int length = end - start;
-
-  if (length < 10) {
-    return;
-  }
-
-  // if (length < 16) {
-  //   return;
-  //   // bool inOrder = true;
-  //   // for(int i = start; i < end - 1; i++){
-  //   //   if(list[i] > list[i + 1]){
-  //   //     inOrder = false;
-  //   //     break;
-  //   //   }
-  //   // }
-  //   // if(inOrder) return;
-  // }
-  int range = max - min;
-  if (range <= 1) return;
-  int sectionWidth = range ~/  3;
-  int pivotAB = min + sectionWidth;
-  int pivotBC = pivotAB + sectionWidth;
-  if (pivotAB == pivotBC) return;
-
-  int sizeA = 0;
-  int sizeB = 0;
-
-  for (int i = start; i < end; i++) {
-    if (list[i] < pivotAB) {
-      sizeA++;
-    } else if (list[i] < pivotBC) {
-      sizeB++;
-    }
-  }
-
-  int sizeC = length - sizeA - sizeB;
-  // print('min: $min, max: $max, range: $range, abPivot: $abPivot, bcPivot: $bcPivot, aSize:$aSize, bSize: $bSize, cSize:${length - aSize - bSize}');
-
-  int indexA = start;
-  int indexB = start + sizeA;
-  int indexC = indexB + sizeB;
-
-  int value = list[length - 1];
-  int swapValue = -1;
-  int finish = start + length - 1;
-  while (true) {
-
-    swapValue = value;
-    if (value < pivotAB) {
-      while (list[indexA] < pivotAB) {
-        indexA++;
-      }
-      value = list[indexA];
-      list[indexA] = swapValue;
-      print("$value replaced ${swapValue} at indexA: $indexA. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
-    }
-
-    else if (value < pivotBC) {
-      while(list[indexB] >= pivotAB && list[indexB] < pivotBC){
-        indexB++;
-      }
-      value = list[indexB];
-      list[indexB] = swapValue;
-      print("$value replaced ${swapValue} at indexB: $indexB. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
-    }
-
-    else {
-      while (list[indexC] >= pivotBC) {
-        indexC++;
-        if (indexC == finish) {
-          boundedMegaSort(list, start, sizeA, min, pivotAB);
-          boundedMegaSort(list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
-          boundedMegaSort(list, start + sizeA + sizeB, start + length, pivotBC, max);
-          return;
-        }
-      }
-      value = list[indexC];
-      list[indexC] = swapValue;
-      print("$value replaced ${swapValue} at indexC: $indexC. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
-    }
-  }
-}
-

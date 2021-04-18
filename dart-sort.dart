@@ -1,6 +1,6 @@
 import 'dart:math';
 
-List<int> randomInts(int count, [int max = 1000]) {
+List<int> generate_random_list(int count, [int max = 1000]) {
   List<int> numbers = [];
   Random random = Random.secure();
   for (int i = 0; i < count; i++) {
@@ -123,10 +123,10 @@ void sortStartAndEndPivot(
 }
 
 int itemCount = 1000000;
-List<int> list = randomInts(itemCount);
+List<int> list = generate_random_list(itemCount);
 
 void randomizeList() {
-  list = randomInts(itemCount);
+  list = generate_random_list(itemCount);
 }
 
 void testMySort() {
@@ -134,10 +134,10 @@ void testMySort() {
 }
 
 void testOfficialSort() {
-  officialSort(list);
+  quiick_sort(list);
 }
 
-void officialSort(List<int> unsortedList) {
+void quiick_sort(List<int> unsortedList) {
   unsortedList.sort(quickSortInt);
 }
 
@@ -151,7 +151,7 @@ int quickSortInt(int a, int b) {
   return 0;
 }
 
-void timeFunction(Function function, {String name = 'some function'}) {
+void time_function(Function function, {String name = 'some function'}) {
   DateTime start = DateTime.now();
   function();
   DateTime finished = DateTime.now();
@@ -180,7 +180,7 @@ void insertionSort(List<int> list, int left, int right) {
   }
 }
 
-void megaSort(List<int> list) {
+void master_sort(List<int> list) {
   int length = list.length;
   int min = 0;
   int max = 0;
@@ -195,9 +195,9 @@ void megaSort(List<int> list) {
 
   int range = max - min;
 
-  if(range == 0) return;
+  if (range == 0) return;
 
-  int sectionWidth = range ~/  3;
+  int sectionWidth = range ~/ 3;
 
   int abPivot = min + sectionWidth;
   int bcPivot = abPivot + sectionWidth;
@@ -232,23 +232,25 @@ void megaSort(List<int> list) {
       value = list[indexA];
       list[indexA] = swapValue;
       // print("$value swapped with ${swapValue} at $indexA");
-    }
-
-    else if (value < bcPivot) {
-      while(list[indexB] >= abPivot && list[indexB] < bcPivot){
+    } else if (value < bcPivot) {
+      while (list[indexB] >= abPivot && list[indexB] < bcPivot) {
         indexB++;
       }
       value = list[indexB];
       list[indexB] = swapValue;
-    }
-
-    else {
+    } else {
       while (list[indexC] >= bcPivot) {
         indexC++;
-        if(indexC == length) {
-          boundedMegaSort(list, 0, aSize, min, abPivot);
-          boundedMegaSort(list, aSize, aSize + bSize, abPivot, bcPivot);
-          boundedMegaSort(list, aSize + bSize, length, bcPivot, max);
+        if (indexC == length) {
+          if (sectionWidth > 16) {
+            boundedMegaSort(list, 0, aSize, min, abPivot);
+            boundedMegaSort(list, aSize, aSize + bSize, abPivot, bcPivot);
+            boundedMegaSort(list, aSize + bSize, length, bcPivot, max);
+          } else {
+            insertionSort(list, 0, aSize);
+            insertionSort(list, aSize, aSize + bSize);
+            insertionSort(list, aSize + bSize, length);
+          }
           return;
         }
       }
@@ -260,15 +262,9 @@ void megaSort(List<int> list) {
 
 void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
   int length = end - start;
-
-  if (length < 16) {
-    insertionSort(list, start, end - 1);
-    return;
-  }
-
   int range = max - min;
   if (range <= 1) return;
-  int sectionWidth = range ~/  3;
+  int sectionWidth = range ~/ 3;
   int pivotAB = min + sectionWidth;
   int pivotBC = pivotAB + sectionWidth;
   if (pivotAB == pivotBC) return;
@@ -291,11 +287,14 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
   int indexB = start + sizeA;
   int indexC = indexB + sizeB;
 
+  if(length - 1 >= list.length){
+    print('break');
+  }
+
   int value = list[length - 1];
   int swapValue = -1;
   int finish = start + length - 1;
   while (true) {
-
     swapValue = value;
     if (value < pivotAB) {
       while (list[indexA] < pivotAB) {
@@ -304,24 +303,36 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
       value = list[indexA];
       list[indexA] = swapValue;
       // print("$value replaced ${swapValue} at indexA: $indexA. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
-    }
-
-    else if (value < pivotBC) {
-      while(list[indexB] >= pivotAB && list[indexB] < pivotBC){
+    } else if (value < pivotBC) {
+      while (list[indexB] >= pivotAB && list[indexB] < pivotBC) {
         indexB++;
       }
       value = list[indexB];
       list[indexB] = swapValue;
       // print("$value replaced ${swapValue} at indexB: $indexB. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
-    }
+    } else {
+      if (indexC >= list.length) {
+        print('break');
+      }
 
-    else {
       while (list[indexC] >= pivotBC) {
         indexC++;
         if (indexC == finish) {
-          boundedMegaSort(list, start, sizeA, min, pivotAB);
-          boundedMegaSort(list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
-          boundedMegaSort(list, start + sizeA + sizeB, start + length, pivotBC, max);
+          if (sizeA > 16) {
+            boundedMegaSort(list, start, sizeA, min, pivotAB);
+          } else {
+            insertionSort(list, start, sizeA);
+          }
+          if (sizeB > 16) {
+            boundedMegaSort(list, sizeA, sizeA + sizeB, pivotAB, pivotBC);
+          } else {
+            insertionSort(list, sizeA, sizeA + sizeB);
+          }
+          if (sizeC > 16) {
+            boundedMegaSort(list, sizeA + sizeB, end - 1, pivotBC, max);
+          } else {
+            insertionSort(list, sizeA + sizeB, end - 1);
+          }
           return;
         }
       }
@@ -331,7 +342,6 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
     }
   }
 }
-
 
 /**
  * Only by developing a deep understanding of the different kinds of sorting algorithms can you hope to improve upon them

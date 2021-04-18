@@ -1,147 +1,10 @@
-import 'dart:math';
 
-List<int> generate_random_list(int count, [int max = 1000]) {
-  List<int> numbers = [];
-  Random random = Random.secure();
-  for (int i = 0; i < count; i++) {
-    numbers.add(random.nextInt(max));
-  }
-  return numbers;
+
+void quick_sort(List<int> list) {
+  list.sort(compare_ints);
 }
 
-int total = 0;
-int i = 0;
-int min = -1;
-int max = -1;
-int pivot = -1;
-int itemsUnderPivot = -1;
-int xValue = -1;
-int yValue = -1;
-int x = -1;
-int y = -1;
-
-void mySort(List<int> items) {
-  sortStartAndEnd(items, 0, items.length);
-}
-
-bool isSorted(List<int> items, int start, int end) {
-  for (int index = start; index < end - 1; index++) {
-    if (items[index] > items[index + 1]) return false;
-  }
-  return true;
-}
-
-void sortStartAndEnd(List<int> items, int start, int end) {
-  DateTime flag0 = DateTime.now();
-
-  // calculate pivot
-  total = 0;
-  while (i < end) {
-    total += items[i];
-    i++;
-  }
-  pivot = total ~/ items.length;
-
-  DateTime flag1 = DateTime.now();
-
-  // calculate number of items under pivot
-  itemsUnderPivot = 0;
-  for (i = start; i < end; i++) {
-    if (items[i] < pivot) {
-      itemsUnderPivot++;
-    }
-  }
-
-  if (itemsUnderPivot == 0) return;
-
-  DateTime flag2 = DateTime.now();
-
-  // swap items
-  int endX = start + itemsUnderPivot;
-  y = endX;
-  for (x = start; x < endX; x++) {
-    if (items[x] < pivot) {
-      continue;
-    }
-    xValue = items[x];
-    while (items[y] >= pivot) {
-      y++;
-    }
-    items[x] = items[y];
-    items[y] = xValue;
-  }
-
-  DateTime flag3 = DateTime.now();
-  printDifference('flag0', flag0, flag1);
-  printDifference('flag1', flag1, flag2);
-  printDifference('flag2', flag2, flag3);
-
-  // if (end - start < 2) return;
-
-  // if(!isSorted(items, start, itemsUnderPivot)){
-  //   sortStartAndEnd(items, start, itemsUnderPivot);
-  // }
-  // if(!isSorted(items, start + itemsUnderPivot, end)){
-  //   sortStartAndEnd(items, start + itemsUnderPivot, end);
-  // }
-}
-
-void sortStartAndEndPivot(
-    List<int> items, int start, int end, int min, int max) {
-  pivot = ((min + max) * 0.5).toInt();
-  itemsUnderPivot = 0;
-
-  for (i = start; i < end; i++) {
-    if (items[i] < pivot) {
-      itemsUnderPivot++;
-    }
-  }
-
-  if (itemsUnderPivot == 0) return;
-
-  y = start + itemsUnderPivot;
-  for (x = start; x < start + itemsUnderPivot; x++) {
-    if (items[x] < pivot) {
-      continue;
-    }
-    while (items[y] >= pivot) {
-      y++;
-    }
-    xValue = items[x];
-    yValue = items[y];
-    items[x] = yValue;
-    items[y] = xValue;
-    // print("swapped $xValue with $yValue at x: $x, y:$y");
-    y++;
-  }
-
-  // if (end - start <= 2) return;
-
-  // TODO remove call to self
-  // sortStartAndEndPivot(items, start, itemsUnderPivot, min, pivot.toInt());
-  // sortStartAndEndPivot(items, start + itemsUnderPivot, end, pivot.toInt(), max);
-}
-
-int itemCount = 1000000;
-List<int> list = generate_random_list(itemCount);
-
-void randomizeList() {
-  list = generate_random_list(itemCount);
-}
-
-void testMySort() {
-  mySort(list);
-}
-
-void testOfficialSort() {
-  quiick_sort(list);
-}
-
-void quiick_sort(List<int> unsortedList) {
-  unsortedList.sort(quickSortInt);
-}
-
-int quickSortInt(int a, int b) {
+int compare_ints(int a, int b) {
   if (a > b) {
     return 1;
   }
@@ -149,23 +12,6 @@ int quickSortInt(int a, int b) {
     return -1;
   }
   return 0;
-}
-
-void time_function(Function function, {String name = 'some function'}) {
-  DateTime start = DateTime.now();
-  function();
-  DateTime finished = DateTime.now();
-  Duration duration = finished.difference(start);
-  int seconds = duration.inSeconds;
-  int milliseconds = duration.inMilliseconds % 1000;
-  print("Finished $name in $seconds seconds $milliseconds milliseconds");
-}
-
-void printDifference(String name, DateTime a, DateTime b) {
-  Duration duration = b.difference(a);
-  int seconds = duration.inSeconds;
-  int milliseconds = duration.inMilliseconds % 1000;
-  print("name: $name, seconds: $seconds, milliseconds:$milliseconds");
 }
 
 void insertionSort(List<int> list, int left, int right) {

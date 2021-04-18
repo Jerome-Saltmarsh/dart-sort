@@ -264,6 +264,9 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
   int length = end - start;
   int range = max - min;
   if (range <= 1) return;
+
+  // todo the range determines how many pivots are needed
+
   int sectionWidth = range ~/ 3;
   int pivotAB = min + sectionWidth;
   int pivotBC = pivotAB + sectionWidth;
@@ -291,9 +294,18 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
     print('break');
   }
 
-  int value = list[length - 1];
+  int firstOutOfPlaceIndex = -1;
+  for(int i = start; i < end - 1; i++){
+    if(list[i] > list[i + 1]){
+      firstOutOfPlaceIndex = i;
+      break;
+    }
+  }
+  if (firstOutOfPlaceIndex == -1) return; // the list is in order
+
+  int value = list[end - 1];
   int swapValue = -1;
-  int finish = start + length - 1;
+  int finish = end - 1;
   while (true) {
     swapValue = value;
     if (value < pivotAB) {
@@ -311,10 +323,6 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
       list[indexB] = swapValue;
       // print("$value replaced ${swapValue} at indexB: $indexB. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
     } else {
-      if (indexC >= list.length) {
-        print('break');
-      }
-
       while (list[indexC] >= pivotBC) {
         indexC++;
         if (indexC == finish) {

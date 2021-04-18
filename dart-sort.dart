@@ -287,7 +287,7 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
   int indexB = start + sizeA;
   int indexC = indexB + sizeB;
 
-  if(length - 1 >= list.length){
+  if(length - 1 >= list.length || length <= 0){
     print('break');
   }
 
@@ -319,19 +319,19 @@ void boundedMegaSort(List<int> list, int start, int end, int min, int max) {
         indexC++;
         if (indexC == finish) {
           if (sizeA > 16) {
-            boundedMegaSort(list, start, sizeA, min, pivotAB);
+            boundedMegaSort(list, start, start + sizeA, min, pivotAB);
           } else {
-            insertionSort(list, start, sizeA);
+            insertionSort(list, start, start + sizeA);
           }
           if (sizeB > 16) {
-            boundedMegaSort(list, sizeA, sizeA + sizeB, pivotAB, pivotBC);
+            boundedMegaSort(list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
           } else {
-            insertionSort(list, sizeA, sizeA + sizeB);
+            insertionSort(list, start + sizeA, start + sizeA + sizeB);
           }
           if (sizeC > 16) {
-            boundedMegaSort(list, sizeA + sizeB, end - 1, pivotBC, max);
+            boundedMegaSort(list, start + sizeA + sizeB, end - 1, pivotBC, max);
           } else {
-            insertionSort(list, sizeA + sizeB, end - 1);
+            insertionSort(list, start + sizeA + sizeB, end - 1);
           }
           return;
         }

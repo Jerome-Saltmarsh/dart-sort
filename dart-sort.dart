@@ -1,5 +1,3 @@
-
-
 void quick_sort(List<int> list) {
   list.sort(compare_ints);
 }
@@ -120,8 +118,8 @@ void masterSortBounded(List<int> list, int start, int end, int min, int max) {
   if (range <= 1) return;
 
   int firstOutOfPlaceIndex = -1;
-  for(int i = start; i < end - 1; i++){
-    if(list[i] > list[i + 1]){
+  for (int i = start; i < end - 1; i++) {
+    if (list[i] > list[i + 1]) {
       firstOutOfPlaceIndex = i + 1;
       break;
     }
@@ -158,21 +156,16 @@ void masterSortBounded(List<int> list, int start, int end, int min, int max) {
   int indexC = indexB + sizeB;
   int indexD = indexC + sizeC;
 
-  int value = list[end - 1];
+  int value = list[start];
   int swapValue = -1;
-  int finish = end - 1;
 
-  // print("swapping first and last");
-  // int last = list[end - 1];
-  // int outOfPlaceValue = list[firstOutOfPlaceIndex];
-  // list[firstOutOfPlaceIndex] = last;
-  // list[end - 1] = outOfPlaceValue;
-
-  for(int z = 0; z < length; z++) {
+  int finish = 100;
+  while (true) {
     swapValue = value;
     if (value < pivotAB) {
       while (list[indexA] < pivotAB) {
         indexA++;
+        if (indexA >= sizeA) return;
       }
       value = list[indexA];
       list[indexA] = swapValue;
@@ -180,6 +173,7 @@ void masterSortBounded(List<int> list, int start, int end, int min, int max) {
     } else if (value < pivotBC) {
       while (list[indexB] >= pivotAB && list[indexB] < pivotBC) {
         indexB++;
+        if (indexB >= sizeB) return;
       }
       value = list[indexB];
       list[indexB] = swapValue;
@@ -187,12 +181,12 @@ void masterSortBounded(List<int> list, int start, int end, int min, int max) {
     } else if (value < pivotCD) {
       while (list[indexC] >= pivotBC && list[indexC] < pivotCD) {
         indexC++;
+        if (indexC >= sizeC) return;
       }
       value = list[indexC];
       list[indexC] = swapValue;
       // print("$value replaced ${swapValue} at indexC: $indexB. sizes[$sizeA, $sizeB, $sizeC], finish: $finish, length: $length, pivots:[$min, $pivotAB, $pivotBC, $max]");
-    }
-    else {
+    } else {
       while (list[indexD] >= pivotCD) {
         indexD++;
         if (indexD >= finish) {
@@ -202,17 +196,20 @@ void masterSortBounded(List<int> list, int start, int end, int min, int max) {
             insertionSort(list, start, start + sizeA);
           }
           if (sizeB > 10) {
-            masterSortBounded(list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
+            masterSortBounded(
+                list, start + sizeA, start + sizeA + sizeB, pivotAB, pivotBC);
           } else {
             insertionSort(list, start + sizeA, start + sizeA + sizeB);
           }
           if (sizeC > 10) {
-            masterSortBounded(list, start + sizeA + sizeB, end - 1, pivotBC, max);
+            masterSortBounded(
+                list, start + sizeA + sizeB, end - 1, pivotBC, max);
           } else {
             insertionSort(list, start + sizeA + sizeB, end - 1);
           }
           if (sizeC > 10) {
-            masterSortBounded(list, start + sizeA + sizeB, end - 1, pivotBC, max);
+            masterSortBounded(
+                list, start + sizeA + sizeB, end - 1, pivotBC, max);
           } else {
             insertionSort(list, start + sizeA + sizeB, end - 1);
           }
@@ -304,3 +301,21 @@ void masterSortBounded(List<int> list, int start, int end, int min, int max) {
  *
  * // all data is passed as json
  */
+
+void goodSort(List list) {
+  int marginSize = 5;
+  int margin = list.length ~/ marginSize;
+
+  for (int x = 0; x < margin; x++) {
+    for (int i = 0; i < marginSize; i++) {
+      int index = margin * i + x;
+      var item = list[index];
+      int j = index;
+      while ((j > margin) && (list[j - margin] > item)) {
+        list[j] = list[j - margin];
+        j -= margin;
+      }
+      list[j] = item;
+    }
+  }
+}

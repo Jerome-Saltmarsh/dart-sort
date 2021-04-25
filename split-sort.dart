@@ -4,7 +4,7 @@ void testSplitSort() {
 }
 
 void splitSort(List<int> list) {
-  print(list);
+  // print(list);
   int pivot = list.length ~/ 2;
   _splitSort(list, 0, pivot);
   _splitSort(list, pivot, list.length - 1);
@@ -17,7 +17,7 @@ void _splitSort(List<int> list, int left, int right) {
       int val = list[left];
       list[left] = list[left + 1];
       list[left + 1] = val;
-      print(list);
+      // print(list);
     }
     return;
   }
@@ -41,9 +41,9 @@ void mergePivots(List<int> list, int pivot) {
     int val2 = list[pivot + swaps - i - 1];
     list[pivot - i - 1] = val2;
     list[pivot + swaps - i - 1] = val1;
-    print(list);
+    // print(list);
   }
 
-  mergePivots(list, pivot - swaps);
-  mergePivots(list, pivot + swaps);
+  // mergePivots(list, pivot - swaps);
+  // mergePivots(list, pivot + swaps);
 }

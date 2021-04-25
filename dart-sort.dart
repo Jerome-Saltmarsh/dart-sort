@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'main.dart';
+
 void quick_sort(List<int> list) {
   list.sort(compare_ints);
 }
@@ -302,20 +306,75 @@ void masterSortBounded(List<int> list, int start, int end, int min, int max) {
  * // all data is passed as json
  */
 
-void goodSort(List list) {
-  int marginSize = 5;
-  int margin = list.length ~/ marginSize;
 
-  for (int x = 0; x < margin; x++) {
-    for (int i = 0; i < marginSize; i++) {
-      int index = margin * i + x;
-      var item = list[index];
-      int j = index;
-      while ((j > margin) && (list[j - margin] > item)) {
-        list[j] = list[j - margin];
-        j -= margin;
-      }
-      list[j] = item;
+
+List<int> mSort(List<int> list) {
+
+  DateTime checkpoint0 = DateTime.now();
+
+  int max = list[0];
+  int min = list[0];
+  List<int> indexes = List.filled(list.length, 0);
+  List<int> sortedList = List.filled(list.length, 0);
+
+  DateTime checkpoint1 = DateTime.now();
+
+  var numberOfSections = 10000;
+
+  final sectionSizes = List.filled(numberOfSections + 1, 0);
+  final sectionIndexes = List.filled(numberOfSections + 1, 0);
+
+  for (var i = 0; i < list.length; i++) {
+    if (list[i] < min) {
+      min = list[i];
+    } else if (list[i] > max) {
+      max = list[i];
     }
   }
+
+  var range = max - min;
+  var sectionSize = range / numberOfSections;
+
+  DateTime checkpoint2 = DateTime.now();
+
+  for (var i = 0; i < list.length; i++) {
+    var section = (list[i] - min) ~/ sectionSize;
+    // todo remove this check
+    // if(section == numberOfSections){
+    //   section = numberOfSections - 1;
+    // }
+    sectionSizes[section]++;
+    indexes[i] = section;
+  }
+
+
+  DateTime checkpoint3 = DateTime.now();
+
+  var startingIndexes = List.filled(numberOfSections + 1, 0);
+  int total = 0;
+  for (var i = 0; i < numberOfSections; i++) {
+    startingIndexes[i] = total;
+    total += sectionSizes[i];
+  }
+
+
+  DateTime checkpoint4 = DateTime.now();
+
+  for (var i = 0; i < list.length; i++) {
+    var index = indexes[i];
+    int newIndex = sectionIndexes[index] + startingIndexes[index];
+    sortedList[newIndex] = list[i];
+    sectionIndexes[index]++;
+  }
+
+
+  DateTime checkpoint5 = DateTime.now();
+
+  printDifference('0', checkpoint0, checkpoint1);
+  printDifference('1', checkpoint1, checkpoint2);
+  printDifference('2', checkpoint2, checkpoint3);
+  printDifference('3', checkpoint3, checkpoint4);
+  printDifference('4', checkpoint4, checkpoint5);
+  return sortedList;
 }
+

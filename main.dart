@@ -8,7 +8,10 @@ int swaps = 0;
 int comparisons = 0;
 
 void main() {
-  testSplitSort();
+  items = generate_random_list(10000);
+  // tSplit();
+  time_function(testMSort, name: 'm-sort ${items.length} items');
+  // print(items);
   // items = items;
   // // time_function(master_sort_items, name: 'master-sort ${items.length} items');
   // time_function(quick_sort_items, name: 'Official ${items.length}');
@@ -44,6 +47,14 @@ void main() {
   // print(list8);
 
   // print('swaps: $swaps, comparisons: $comparisons');
+}
+
+void testMSort(){
+  mSort(items);
+}
+
+void tSplit(){
+  splitSort(items);
 }
 
 void testSortMany(){
@@ -181,10 +192,6 @@ void master_sort_items() {
 
 void quick_sort_items() {
   quick_sort(items);
-}
-
-void good_sort_items() {
-  goodSort(items);
 }
 
 List<int> generate_random_list(int count, [int max = 1000]) {
